@@ -10,6 +10,10 @@ In progress
 
 In progress 
 
+## Data sources 
+
+- Landsat: https://earthexplorer.usgs.gov/. Dataset: `Landsat 8-9 OLI/TIRS C2 L2`. Product: `Landsat Collection 2 Level-2 Product Bundle`
+
 ## Contacts 
 
 In progress
