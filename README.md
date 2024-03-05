@@ -4,7 +4,14 @@ Stands for finnish word "`metsä`" which means "`forest`". So, `pymetsa` is a li
 
 ## Documentation 
 
-In progress 
+The architecture og the module is multi-layer: 
+
+* `Download` - access to data sources using bindings above APIs
+* `Preprocessing` - set of functions to preprocess raw spatial data (both raster and vector)
+* `Sample` - layer for preparing the data for neural networks training (clipping, augmentation, saving objects into files, etc.)
+* `Model` - module for machine learning model fitting
+
+And `visualization` for creating plots and save them into files.
 
 ## Examples 
 
