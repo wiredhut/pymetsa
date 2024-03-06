@@ -1,7 +1,10 @@
 import rasterio
 import numpy as np
 
-def calculate_ndvi(input_tif_path, output_ndvi_path):
+def calculate_ndvi(input_tif_path,
+                   output_ndvi_path,
+                   red_channel:int = 4,
+                   nir_channel:int = 8):
     """
     Calculates the NDVI for a given Sentinel-2 .tif file and saves the result to a new file.
 
@@ -13,8 +16,8 @@ def calculate_ndvi(input_tif_path, output_ndvi_path):
     # Open the input .tif file
     with rasterio.open(input_tif_path) as src:
         # Assuming that the RED band is at position 4 (B4) and the NIR band is at position 8 (B8) in Sentinel-2 data
-        red = src.read(4)
-        nir = src.read(8)
+        red = src.read(red_channel)
+        nir = src.read(nir_channel)
 
         # Calculate NDVI
         ndvi = (nir.astype(float) - red.astype(float)) / (nir + red)
