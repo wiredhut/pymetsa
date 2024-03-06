@@ -1,4 +1,4 @@
-from pymetsa.preprocssing.raster.ndvi_from_tif import calculate_ndvi
+from pymetsa.preprocessing.raster.ndvi_from_tif import calculate_ndvi
 
 
 INPUT_PATH = "pymetsa/sample/tif_files/geotif_example.tif"
