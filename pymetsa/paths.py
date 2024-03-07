@@ -20,3 +20,11 @@ def get_tmp_folder_path() -> Path:
         tmp_folder.mkdir(exist_ok=True, parents=True)
 
     return tmp_folder
+
+
+def get_arbonaut_raster_path() -> Path:
+    return Path(get_data_folder_path(), 'arbonaUT', 'Raster_data')
+
+
+def get_arbonaut_vector_path() -> Path:
+    return Path(get_data_folder_path(), 'arbonaUT', 'Vector_data')
