@@ -2,6 +2,10 @@
 
 Stands for finnish word "`metsä`" which means "`forest`". So, `pymetsa` is a library for forest-related spatial data processing
 
+## Before start 
+
+To use this library there is a need to place the following files in the data folder in this repository 
+
 ## Documentation 
 
 The architecture og the module is multi-layer: 
@@ -15,7 +19,7 @@ And `visualization` for creating plots and save them into files.
 
 ## Examples 
 
-In progress 
+The example
 
 ## Data sources 
 
@@ -54,4 +58,4 @@ For local launch there is a need to start `launch.py`
 
 ## Contacts 
 
-In progress
+<span style="color:orange">In progress</span>
