@@ -2,7 +2,7 @@
 name = "pymetsa"
 version = "0.1.0"
 description = ""
-authors = ["Dreamlone <mik_sar@mail.ru>"]
+authors = ["Dreamlone <mik.sarafanov@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -11,6 +11,7 @@ rasterio = "^1.3.9"
 matplotlib = "^3.8.3"
 requests = "^2.31.0"
 pandas = "^2.2.1"
+uvicorn = "^0.27.1"
 
 [tool.poetry.dev-dependencies]
 

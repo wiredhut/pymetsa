@@ -1,12 +1,20 @@
+from pathlib import Path
+from typing import Union
+
 import rasterio
 from rasterio.transform import from_origin
 import numpy as np
 
-# Define the file path for the new GeoTIFF
-file_path = "pymetsa/sample/tif_files/geotif_example.tif"
 
-def create_tif(file_path, bands:int = 12):
-    data = np.random.randint(0, 255, (bands, 100, 100), dtype=np.uint8)
+def create_tif(file_path: Union[str, Path], bands: int = 12):
+    if isinstance(file_path, str):
+        file_path = Path(file_path)
+
+    file_path = file_path.resolve()
+    if file_path.is_file() is False:
+        file_path.parent.mkdir(exist_ok=True, parents=True)
+
+    data = np.random.randint(1, 255, (bands, 100, 100), dtype=np.uint8)
 
     # Define the transform and CRS (Coordinate Reference System) for Helsinki
     transform = from_origin(24.941, 60.170, 0.0001, 0.0001)  # Dummy values, for illustration
