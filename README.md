@@ -21,6 +21,37 @@ In progress
 
 - Landsat: https://earthexplorer.usgs.gov/. Dataset: `Landsat 8-9 OLI/TIRS C2 L2`. Product: `Landsat Collection 2 Level-2 Product Bundle`
 
+
+## Pymetsa as a service 
+
+Current module deployed on Heroku using the following instructions: 
+
+[Deploy FastAPI on Heroku using Docker Container](https://akshaykhatale.medium.com/deploy-fastapi-on-heroku-using-docker-container-a920f839de9b)
+
+```
+heroku login
+```
+
+Launch docker daemon and then 
+```
+heroku container:login
+```
+
+```
+heroku container:push web --app pymetsa-demo
+```
+
+```
+heroku container:release web --app pymetsa-demo
+```
+
+Swagger UI available via URL: <span style="color:orange">In progress</span>
+
+- `login`: `demo`
+- `password`: `demo`
+
+For local launch there is a need to start `launch.py`
+
 ## Contacts 
 
 In progress

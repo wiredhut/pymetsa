@@ -2,7 +2,7 @@
 name = "pymetsa"
 version = "0.1.0"
 description = ""
-authors = ["Dreamlone <mik_sar@mail.ru>"]
+authors = ["Dreamlone <mik.sarafanov@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
