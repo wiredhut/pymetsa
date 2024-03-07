@@ -5,11 +5,15 @@ def get_project_path() -> Path:
     return Path(__file__).parent.parent
 
 
+def get_data_folder_path() -> Path:
+    return Path(get_project_path(), 'data')
+
+
 def get_tmp_folder_path() -> Path:
     """
     Return path to the temporary folder where different files can be stored
     """
-    tmp_folder = Path(get_project_path(), 'data', 'temp_storage')
+    tmp_folder = Path(get_data_folder_path(), 'temp_storage')
     tmp_folder = tmp_folder.resolve()
 
     if tmp_folder.exists() is False:

@@ -14,7 +14,7 @@ def create_tif(file_path: Union[str, Path], bands: int = 12):
     if file_path.is_file() is False:
         file_path.parent.mkdir(exist_ok=True, parents=True)
 
-    data = np.random.randint(0, 255, (bands, 100, 100), dtype=np.uint8)
+    data = np.random.randint(1, 255, (bands, 100, 100), dtype=np.uint8)
 
     # Define the transform and CRS (Coordinate Reference System) for Helsinki
     transform = from_origin(24.941, 60.170, 0.0001, 0.0001)  # Dummy values, for illustration
