@@ -1,9 +1,6 @@
 import geopandas as gpd
 from pathlib import Path
 
-import rasterio
-from rasterio import features
-
 from pymetsa.paths import get_arbonaut_vector_path, get_data_folder_path, \
     get_arbonaut_raster_path
 from pymetsa.preprocessing.vector.vector_raster import vector_to_raster

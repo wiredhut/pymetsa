@@ -28,3 +28,13 @@ def get_arbonaut_raster_path() -> Path:
 
 def get_arbonaut_vector_path() -> Path:
     return Path(get_data_folder_path(), 'arbonaUT', 'Vector_data')
+
+
+def prepared_folder() -> Path:
+    folder = Path(get_data_folder_path(), 'prepared')
+    folder = folder.resolve()
+
+    if folder.exists() is False:
+        folder.mkdir(exist_ok=True, parents=True)
+
+    return folder
