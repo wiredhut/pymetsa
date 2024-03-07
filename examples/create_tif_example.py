@@ -1,4 +1,4 @@
-from pymetsa.preprocssing.raster.create_tif import create_tif
+from pymetsa.preprocessing.raster.create_tif import create_tif
 
 # Example usage of the function
 FILE_PATH = 'examples/temp_storage/ndvi_from_geotif_example.tif'
