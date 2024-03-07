@@ -4,7 +4,11 @@ Stands for finnish word "`metsä`" which means "`forest`". So, `pymetsa` is a li
 
 ## Before start 
 
-To use this library there is a need to place the following files in the data folder in this repository 
+To use this library there is a need to place the following files in the **[data](./data)** folder in this repository:
+
+* `arbonaUT` / `Raster_data`
+* `arbonaUT` / `Vector_data`
+* `arbonaUT` / `Lidar_variables.xlsx`
 
 ## Documentation 
 
@@ -19,7 +23,7 @@ And `visualization` for creating plots and save them into files.
 
 ## Examples 
 
-The example
+The **[examples](./examples)** folder contain all necessary launch demo scenarios for this library
 
 ## Data sources 
 
