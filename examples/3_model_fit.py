@@ -81,28 +81,28 @@ def fit_regression_model(class_threshold: int = 85):
     ###################
     # BALANCE SAMPLES #
     ###################
-    names = deepcopy(FEATURES_NAMES)
-    names.extend(['age', 'Class'])
-    df = pd.DataFrame(np.hstack([x_train, y_train.reshape((-1, 1)), y_class_train.reshape((-1, 1))]),
-                      columns=names)
-    # Take minor class
-    for i in [1, 2, 3]:
-        df_minor = df[df['Class'] == OLD_CLASS]
-        # Add some noise
-        features_noise = np.random.normal(0, 0.025, size=(len(df_minor), len(FEATURES_NAMES)))
-        print(f'{i}. Features min noise: {np.min(features_noise)}, Features max noise: {np.max(features_noise)}')
-
-        target_noise = np.random.normal(0, 0.35, size=(len(df_minor), 1))
-        print(f'{i}. Target min noise: {np.min(target_noise)}, Target max noise: {np.max(target_noise)}')
-        df_minor[FEATURES_NAMES] = df_minor[FEATURES_NAMES] + (df_minor[FEATURES_NAMES] * features_noise)
-        df_minor['age'] = df_minor[['age']] + target_noise
-
-        df = pd.concat([df, df_minor])
-
-    df = df.dropna()
-    x_train = np.array(df[FEATURES_NAMES])
-    y_train = np.array(df['age'])
-    y_class_train = np.array(df['Class'])
+    # names = deepcopy(FEATURES_NAMES)
+    # names.extend(['age', 'Class'])
+    # df = pd.DataFrame(np.hstack([x_train, y_train.reshape((-1, 1)), y_class_train.reshape((-1, 1))]),
+    #                   columns=names)
+    # # Take minor class
+    # for i in [1, 2, 3]:
+    #     df_minor = df[df['Class'] == OLD_CLASS]
+    #     # Add some noise
+    #     features_noise = np.random.normal(0, 0.025, size=(len(df_minor), len(FEATURES_NAMES)))
+    #     print(f'{i}. Features min noise: {np.min(features_noise)}, Features max noise: {np.max(features_noise)}')
+    #
+    #     target_noise = np.random.normal(0, 0.35, size=(len(df_minor), 1))
+    #     print(f'{i}. Target min noise: {np.min(target_noise)}, Target max noise: {np.max(target_noise)}')
+    #     df_minor[FEATURES_NAMES] = df_minor[FEATURES_NAMES] + (df_minor[FEATURES_NAMES] * features_noise)
+    #     df_minor['age'] = df_minor[['age']] + target_noise
+    #
+    #     df = pd.concat([df, df_minor])
+    #
+    # df = df.dropna()
+    # x_train = np.array(df[FEATURES_NAMES])
+    # y_train = np.array(df['age'])
+    # y_class_train = np.array(df['Class'])
     ###################
     # BALANCE SAMPLES #
     ###################
@@ -112,25 +112,33 @@ def fit_regression_model(class_threshold: int = 85):
     ###############
     # Brute force #
     ###############
-    max_depth = [100, 150, 170]
-    min_samples_split = [4, 5, 6]
-    max_leaf_nodes = [90, 100, 110]
-    param_grid = {'max_depth': max_depth,
-                  'min_samples_split': min_samples_split,
-                  'max_leaf_nodes': max_leaf_nodes}
-    estimator = RandomForestRegressor(n_estimators=300, n_jobs=-1)
-    optimizer = GridSearchCV(estimator, param_grid, cv=3,
-                             scoring='neg_mean_absolute_error')
-    optimizer.fit(x_train, y_train)
-    # Optimal model was found
-    reg = optimizer.best_estimator_
+    # max_depth = [100, 150, 170]
+    # min_samples_split = [4, 5, 6]
+    # max_leaf_nodes = [90, 100, 110]
+    # param_grid = {'max_depth': max_depth,
+    #               'min_samples_split': min_samples_split,
+    #               'max_leaf_nodes': max_leaf_nodes}
+    # estimator = RandomForestRegressor(n_estimators=300, n_jobs=-1)
+    # optimizer = GridSearchCV(estimator, param_grid, cv=3,
+    #                          scoring='neg_mean_absolute_error')
+    # optimizer.fit(x_train, y_train)
+    # # Optimal model was found
+    # reg = optimizer.best_estimator_
 
-    with open('model.pkl', 'wb') as pkl:
-        pickle.dump(reg, pkl)
-
+    reg = RandomForestRegressor(n_estimators=300, n_jobs=-1, max_depth=30,
+                                min_samples_split=25, max_leaf_nodes=110, random_state=5)
     reg.fit(x_train, y_train)
+
     predicted_train = reg.predict(x_train).round()
     predicted_test = reg.predict(x_test).round()
+
+    # Re-train on full data
+    reg = RandomForestRegressor(n_estimators=300, n_jobs=-1, max_depth=30,
+                                min_samples_split=25, max_leaf_nodes=110,
+                                random_state=5)
+    reg.fit(features, target)
+    with open('model.pkl', 'wb') as pkl:
+        pickle.dump(reg, pkl)
 
     # Calculate metrics on train and test
     mae_metric_train = mean_absolute_error(y_true=y_train, y_pred=predicted_train)
