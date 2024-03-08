@@ -1,22 +1,24 @@
 from typing import List
 from copy import deepcopy
 from pathlib import Path
+
 import geopandas as gpd
 import numpy as np
-import matplotlib.pyplot as plt
 import rasterio
-from matplotlib import cm
-
+from loguru import logger
 from rasterio.mask import mask
-from shapely.geometry import shape, mapping
+from shapely.geometry import mapping
 
 from pymetsa.paths import get_arbonaut_raster_path, get_arbonaut_vector_path
 
+
 FILE_NAMES = ["CHM.tif"]
+
 
 def extract_values_by_extend_through_files(file_names_tif: List,
                                            shp_mask: str,
-                                           result_name: str):
+                                           result_name: str,
+                                           buffer: int = False):
     """
     Rasterio example.
     Extract values from raster using saved geotiff file
@@ -27,38 +29,36 @@ def extract_values_by_extend_through_files(file_names_tif: List,
 
     for file_tif in file_names_tif:
         raster_path = Path(get_arbonaut_raster_path(), file_tif)
-
+        logger.info(f"Start to extract {file_tif}")
         # Create
+        step = 0
         for id, row in vector_layer.iterrows():
-            geometry = [mapping(row.geometry)]
+            if buffer:
+                geometry = [mapping(row.geometry.buffer(buffer))]
+            else:
+                geometry = [mapping(row.geometry)]
 
             # It's important not to set crop as True because it distort output
-            mins = []
             with rasterio.open(raster_path) as src:
                 out_image, _ = mask(src, geometry, crop=False, nodata=-100.0)
+                total_steps = len(vector_layer) * int(out_image.shape[0])
                 for layer in range(out_image.shape[0]):
                     clipped_matrix = out_image[layer, :, :]
                     clipped_matrix = clipped_matrix[clipped_matrix > -90]
-                    
-                    result_vector.iloc[id][f"{file_tif}_{layer}_mean"] = np.mean(clipped_matrix)
-                    result_vector.iloc[id][f"{file_tif}_{layer}_std"] = np.std(clipped_matrix)
-                    mins.append(np.min(clipped_matrix))
-                    result_vector.iloc[id][f"{file_tif}_{layer}_max"] = np.max(clipped_matrix)
+                    logger.debug(f"Clipped matrix has {len(clipped_matrix)} values for calculate statistics")
 
-                        # row[f"CHM_mean"] = 
+                    result_vector.loc[result_vector.index[id], f"{file_tif}_{layer}_mean"] = np.mean(clipped_matrix)
+                    result_vector.loc[result_vector.index[id], f"{file_tif}_{layer}_std"] = np.std(clipped_matrix)
+                    result_vector.loc[result_vector.index[id], f"{file_tif}_{layer}_min"] = np.min(clipped_matrix)
+                    result_vector.loc[result_vector.index[id], f"{file_tif}_{layer}_max"] = np.max(clipped_matrix)
 
-            # masked_array = np.ma.masked_where(clipped_matrix == -100.0,
-            #                                   clipped_matrix)
-            # cmap = cm.get_cmap('Blues')
-            # cmap.set_bad(color='#C0C0C0')
-            # plt.imshow(masked_array, interpolation='nearest', cmap=cmap)
-            # plt.colorbar()
-            # plt.title('Matrix in the extend')
-            # plt.savefig(f"output_filepath_{id}.png", dpi=600, bbox_inches='tight')
-            # plt.close()
+                    logger.info(f"It's done with ({step}/{total_steps}) steps")
+                    step += 1
+
+    result_vector.to_file(result_name)
 
 
 if __name__ == '__main__':
     extract_values_by_extend_through_files(file_names_tif=FILE_NAMES,
                                            shp_mask="Age_grid.shp",
-                                           result_name="result.csv")
+                                           result_name="extraction_result.shp")
