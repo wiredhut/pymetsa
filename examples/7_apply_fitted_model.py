@@ -54,7 +54,7 @@ def apply_model(path_to_shp_file: Path, path_to_features_file: Path, path_to_res
     """ Make final prediction """
     class_threshold = 85
 
-    with open('old_model.pkl', 'rb') as pkl:
+    with open('model.pkl', 'rb') as pkl:
         reg_model = pickle.load(pkl)
         max_depth = reg_model.max_depth
         min_samples_split = reg_model.min_samples_split
