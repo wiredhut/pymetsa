@@ -1,8 +1,12 @@
+# import sys
+# sys.path.append("/Users/denis/Downloads/pymetsa/")
+
 import os
 from pathlib import Path
 from datetime import datetime
 
 from pymetsa.download.from_aeris import locations_loop
+
 
 client_id = os.getenv('AERIS_CLIENT_ID')
 client_secret = os.getenv('AERIS_CLIENT_SECRET')
