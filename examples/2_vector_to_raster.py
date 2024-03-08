@@ -8,7 +8,7 @@ from pymetsa.preprocessing.vector.vector_raster import vector_to_raster, \
 
 def vector_to_raster_launch():
     """ Launch algorithm which transform vector attributes table into raster """
-    files_names = ['Age_grid.shp', 'Canopy_structure.shp', 'Grid_lidar_variables..shp']
+    files_names = ['Canopy_structure.shp', 'Grid_lidar_variables..shp']
     vector_paths = []
     for i in files_names:
         vector_paths.append(Path(get_arbonaut_vector_path(), i))
