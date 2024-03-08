@@ -1,19 +1,22 @@
-import geopandas as gpd
 from pathlib import Path
 
 from pymetsa.paths import get_arbonaut_vector_path, get_data_folder_path, \
     get_arbonaut_raster_path
-from pymetsa.preprocessing.vector.vector_raster import vector_to_raster
+from pymetsa.preprocessing.vector.vector_raster import vector_to_raster, \
+    Rasterizer
 
 
 def vector_to_raster_launch():
-    vector_file = Path(get_arbonaut_vector_path(), 'Dead_trees.shp')
-    template_raster_path = Path(get_arbonaut_raster_path(), 'DTM.tif')
-    output_raster_file = Path(get_data_folder_path(), 'Dead_trees.tif')
+    """ Launch algorithm which transform vector attributes table into raster """
+    files_names = ['Canopy_structure.shp', 'Grid_lidar_variables..shp']
+    vector_paths = []
+    for i in files_names:
+        vector_paths.append(Path(get_arbonaut_vector_path(), i))
 
-    # Start transformation
-    vector_layer = gpd.read_file(vector_file)
-    vector_to_raster(vector_layer, template_raster_path, output_raster_file, 'point')
+    # Launch the algorithm of vector to raster
+    save_to = Path(get_data_folder_path(), 'rasterized').resolve()
+    processor = Rasterizer(vector_paths, save_to)
+    processor.run(Path(get_arbonaut_raster_path(), 'DTM.tif'))
 
 
 if __name__ == "__main__":
