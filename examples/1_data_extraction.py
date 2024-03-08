@@ -5,10 +5,12 @@ from pathlib import Path
 
 import geopandas as gpd
 import rasterio
+import pandas as pd
 from loguru import logger
 from rasterstats import zonal_stats
 
-from pymetsa.paths import get_arbonaut_raster_path, get_arbonaut_vector_path
+from pymetsa.paths import get_arbonaut_raster_path, get_arbonaut_vector_path, \
+    get_tmp_folder_path
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -26,7 +28,6 @@ def extract_values_by_extend_through_files(file_names_tif: List,
     Extract values from raster using saved geotiff file
     """
 
-
     vector_layer = gpd.read_file(Path(get_arbonaut_vector_path(), shp_mask))
     geometries = ["geometry"]
     if buffers:
@@ -39,6 +40,7 @@ def extract_values_by_extend_through_files(file_names_tif: List,
 
     file_coding = {}
     for id, file_tif in enumerate(file_names_tif):
+        tmp_df = pd.DataFrame()
         logger.info(f"START {file_tif} ({file_number}/{total_files})")
         raster_path = Path(get_arbonaut_raster_path(), file_tif)
         file_coding[str(id)] = file_tif
@@ -47,34 +49,42 @@ def extract_values_by_extend_through_files(file_names_tif: List,
                 logger.info(f"Band {layer}")
                 for g_id, geometry in enumerate(geometries):
                     logger.info(f"Geometry {geometry}")
-                    vector_layer[f"{id}_{layer}_{g_id}_mean"] = [x["mean"] for x in zonal_stats(vectors=vector_layer[geometry],
-                                                                                                raster=raster_path,
-                                                                                                stats="mean",
-                                                                                                band=layer)]
-                    vector_layer[f"{id}_{layer}_{g_id}_std"] = [x["std"] for x in zonal_stats(vectors=vector_layer[geometry],
-                                                                                              raster=raster_path,
-                                                                                              stats="std",
-                                                                                              band=layer)]
-                    vector_layer[f"{id}_{layer}_{g_id}_min"] = [x["min"] for x in zonal_stats(vectors=vector_layer[geometry],
-                                                                                              raster=raster_path,
-                                                                                              stats="min",
-                                                                                              band=layer)]
-                    vector_layer[f"{id}_{layer}_{g_id}_max"] = [x["max"] for x in zonal_stats(vectors=vector_layer[geometry],
-                                                                                              raster=raster_path,
-                                                                                              stats="max",
-                                                                                              band=layer)]
+                    tmp_df[f"{id}_{layer}_{g_id}_mean"] = [x["mean"] for x in zonal_stats(vectors=vector_layer[geometry],
+                                                                                          raster=raster_path,
+                                                                                          stats="mean",
+                                                                                          band=layer)]
+                    logger.info("mean calculated")
+                    tmp_df[f"{id}_{layer}_{g_id}_std"] = [x["std"] for x in zonal_stats(vectors=vector_layer[geometry],
+                                                                                        raster=raster_path,
+                                                                                        stats="std",
+                                                                                        band=layer)]
+                    logger.info("std calculated")
+                    tmp_df[f"{id}_{layer}_{g_id}_min"] = [x["min"] for x in zonal_stats(vectors=vector_layer[geometry],
+                                                                                        raster=raster_path,
+                                                                                        stats="min",
+                                                                                        band=layer)]
+                    logger.info("min calculated")
+                    tmp_df[f"{id}_{layer}_{g_id}_max"] = [x["max"] for x in zonal_stats(vectors=vector_layer[geometry],
+                                                                                        raster=raster_path,
+                                                                                        stats="max",
+                                                                                        band=layer)]
+                    logger.info("max calculated")
         file_number += 1
+        tmp_df.to_csv(Path(get_tmp_folder_path(), f"{file_tif.replace('.tif', '')}_result.csv"))
 
     geometries.pop(0)
     if len(geometries) > 0:
         vector_layer.drop(labels=geometries, axis=1, inplace=True)
     vector_layer.to_file(result_name)
-    with open('coding_names.json', 'w') as fp:
+    with open(Path(get_tmp_folder_path(), 'coding_names.json'), 'w') as fp:
         json.dump(file_coding, fp)
 
 
 if __name__ == '__main__':
-    extract_values_by_extend_through_files(file_names_tif=FILE_NAMES,
-                                           shp_mask="Age_grid.shp",
-                                           result_name="extraction_result.shp",
-                                           buffers=[-6, 12])
+    executed_files = (os.listdir(get_tmp_folder_path()))
+    executed_files = [x.replace("_result.csv", "") for x in executed_files]
+    file_names = [x.replace(".tif", "") for x in FILE_NAMES]
+    to_be_calculated = [x+".tif" for x in file_names if x not in executed_files]
+    extract_values_by_extend_through_files(file_names_tif=to_be_calculated,
+                                           shp_mask="Grid_lidar_variables..shp",
+                                           result_name="extraction_result.shp")
