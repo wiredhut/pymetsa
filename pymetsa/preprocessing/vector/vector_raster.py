@@ -44,6 +44,7 @@ class Rasterizer:
     fields_by_file = {'Age_grid.shp': ['age', 'basalarea', 'volume',
                                        'sampleplot', 'Class'],
                       'Canopy_structure.shp': ['H_stdev'],
+                      'final_prediction.shp': ['p_age', 'p_class'],
                       'Grid_lidar_variables..shp': ['INV_UNIT', 'OBJECTID',
                                                     'Shape_Leng', 'Shape_Area',
                                                     'L_DDate', 'L_VEG_Z95',
