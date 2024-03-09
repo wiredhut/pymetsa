@@ -1,4 +1,4 @@
-# pymetsa
+<img src="./docs/pymetsa_logo.png" width="750"/>
 
 Stands for finnish word "`metsä`" which means "`forest`". So, `pymetsa` is a library for forest-related spatial data processing
 
